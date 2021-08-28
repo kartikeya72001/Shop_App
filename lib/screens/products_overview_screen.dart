@@ -44,12 +44,7 @@ class ProductOverviewScreen extends StatelessWidget {
         title: Text("My Shop"),
       ),
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 10,
-          mainAxisExtent: 10,
-        ),
+        padding: const EdgeInsets.all(10),
         itemCount: loadedProducts.length,
         itemBuilder: (ctx, idx) {
           return ProductItem(
@@ -58,7 +53,12 @@ class ProductOverviewScreen extends StatelessWidget {
             loadedProducts[idx].imgUrl,
           );
         },
-        padding: const EdgeInsets.all(10),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3 / 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
       ),
     );
   }
