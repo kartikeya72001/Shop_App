@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (ctx) => Products(),
+      // value: Products(),
       child: MaterialApp(
         title: 'My Shop',
         theme: ThemeData(
