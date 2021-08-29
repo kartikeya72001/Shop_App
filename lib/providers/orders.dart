@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:shop_app/widgets/cart_item.dart';
+import 'package:shop_app/providers/cart.dart';
 
 class OrderItem {
   final String id;
   final double amount;
-  final List<CartItem> products;
+  final List<CartItems> products;
   final DateTime dateTime;
 
   OrderItem({
@@ -21,7 +21,7 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-  void addOrder(List<CartItem> cartProd, double total) {
+  void addOrder(List<CartItems> cartProd, double total) {
     _orders.insert(
       0,
       OrderItem(
