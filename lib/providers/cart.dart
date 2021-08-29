@@ -18,11 +18,19 @@ class Cart with ChangeNotifier {
   Map<String, CartItems> _items = {};
 
   Map<String, CartItems> get items {
-    return {...items};
+    return {..._items};
   }
 
   int get itemCount {
     return _items.length;
+  }
+
+  double get totalAmt {
+    double total = 0.0;
+    _items.forEach((key, value) {
+      total += (value.price * value.quantity);
+    });
+    return total;
   }
 
   void additem(String prodId, String title, double price) {
