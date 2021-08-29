@@ -6,11 +6,12 @@ import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
 import './providers/products.dart';
+import './providers/orders.dart';
 
 void main() {
   runApp(MyApp());
 }
-//8.15
+//8.24
 
 class MyApp extends StatelessWidget {
   @override
@@ -22,7 +23,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => Orders(),
+        ),
       ],
       // value: Products(),
       child: MaterialApp(
