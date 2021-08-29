@@ -36,13 +36,32 @@ class Products with ChangeNotifier {
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
   ];
+
+  // var _showFavoritesOnly = false;
+
+  List<Product> get Filteritems {
+    return _items.where((element) => element.isFavourite).toList();
+  }
+
   List<Product> get items {
+    // if (_showFavoritesOnly)
+    //   return _items.where((element) => element.isFavourite).toList();
     return [..._items];
   }
 
   Product filterProducts(String productId) {
     return _items.firstWhere((prod) => prod.id == productId);
   }
+
+  // void showFavOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 
   void addProducts() {
     // _items.add();
