@@ -6,13 +6,14 @@ import 'package:shop_app/screens/orders_screen.dart';
 
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
+import 'package:shop_app/screens/user_products_screen.dart';
 import './providers/products.dart';
 import './providers/orders.dart';
 
 void main() {
   runApp(MyApp());
 }
-//8.24
+//9.4
 
 class MyApp extends StatelessWidget {
   @override
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
           OrdersScreen.routaName: (ctx) => OrdersScreen(),
+          UserProductScreen.routeName: (ctx) => UserProductScreen(),
         },
       ),
     );
