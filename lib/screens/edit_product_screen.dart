@@ -74,14 +74,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
       if (_imgUrlcontroller.text.isEmpty) return;
       if (!_imgUrlcontroller.text.startsWith('http') ||
           !_imgUrlcontroller.text.startsWith('https')) return;
-      if (!_imgUrlcontroller.text.endsWith('.jpg') ||
-          !_imgUrlcontroller.text.endsWith('.jpeg') ||
-          !_imgUrlcontroller.text.endsWith('.png')) return;
+      // if (!_imgUrlcontroller.text.endsWith('.jpg') ||
+      //     !_imgUrlcontroller.text.endsWith('.jpeg') ||
+      //     !_imgUrlcontroller.text.endsWith('.png')) return;
       setState(() {});
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
     if (!isValid) return;
     _form.currentState.save();
@@ -96,10 +96,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
       });
       Navigator.of(context).pop();
     } else {
-      Provider.of<Products>(context, listen: false)
-          .addProducts(_editedProduct)
-          .catchError((error) {
-        return showDialog<Null>(
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProducts(_editedProduct);
+      } catch (error) {
+        await showDialog<Null>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text("Error Occurred"),
@@ -113,12 +114,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      }).then((_) {
+      } finally {
         setState(() {
           isLoading = false;
         });
         Navigator.of(context).pop();
-      });
+      }
     }
     // Navigator.of(context).pop();
   }
@@ -268,10 +269,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               if (!value.startsWith('http') &&
                                   !value.startsWith('https'))
                                 return "Enter a valid a Url";
-                              if (!value.endsWith('.jpg') &&
-                                  !value.endsWith('.jpeg') &&
-                                  !value.endsWith('.png'))
-                                return "Invalid Image URL";
+                              // if (!value.endsWith('.jpg') &&
+                              //     !value.endsWith('.jpeg') &&
+                              //     !value.endsWith('.png'))
+                              //   return "Invalid Image URL";
                               return null;
                             },
                             onSaved: (value) {

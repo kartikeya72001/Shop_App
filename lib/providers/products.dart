@@ -55,6 +55,33 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == productId);
   }
 
+  Future<void> fetchAndGetProducts() async {
+    const url =
+        'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json';
+    try {
+      final resposne = await http.get(Uri.parse(url));
+      final extractedData = json.decode(resposne.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = [];
+      extractedData.forEach((id, prod) {
+        loadedProducts.add(Product(
+          id: id,
+          title: prod['title'],
+          desc: prod['desc'],
+          imgUrl: prod['imgUrl'],
+          price: prod['price'],
+          isFavourite: prod['isFavourite'],
+        ));
+      });
+      // ignore: unnecessary_statements
+      loadedProducts.forEach((element) {
+        _items.add(element);
+      });
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // void showFavOnly() {
   //   _showFavoritesOnly = true;
   //   notifyListeners();
@@ -65,21 +92,20 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> addProducts(product) {
+  Future<void> addProducts(product) async {
     const url =
         'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json';
-    return http
-        .post(
-      Uri.parse(url),
-      body: json.encode({
-        'title': product.title,
-        'desc': product.desc,
-        'imgUrl': product.imgUrl,
-        'price': product.price,
-        'isFavourite': product.isFavourite,
-      }),
-    )
-        .then((response) {
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: json.encode({
+          'title': product.title,
+          'desc': product.desc,
+          'imgUrl': product.imgUrl,
+          'price': product.price,
+          'isFavourite': product.isFavourite,
+        }),
+      );
       final newProduct = Product(
         title: product.title,
         desc: product.desc,
@@ -89,9 +115,10 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
-    }).catchError((error) {
+    } catch (error) {
+      print(error);
       throw error;
-    });
+    }
   }
 
   void updateProduct(String id, Product newProduct) {
