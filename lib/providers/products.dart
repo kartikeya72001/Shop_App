@@ -42,6 +42,10 @@ class Products with ChangeNotifier {
 
   // var _showFavoritesOnly = false;
 
+  final String authtoken;
+
+  Products(this.authtoken, this._items);
+
   List<Product> get Filteritems {
     return _items.where((element) => element.isFavourite).toList();
   }
@@ -57,11 +61,12 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndGetProducts() async {
-    const url =
-        'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json';
+    final url =
+        'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json?auth=$authtoken';
     try {
       final resposne = await http.get(Uri.parse(url));
       final extractedData = json.decode(resposne.body) as Map<String, dynamic>;
+      if (extractedData == null) return;
       final List<Product> loadedProducts = [];
       extractedData.forEach((id, prod) {
         loadedProducts.add(Product(
@@ -92,8 +97,8 @@ class Products with ChangeNotifier {
   // }
 
   Future<void> addProducts(product) async {
-    const url =
-        'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json';
+    final url =
+        'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json?auth=$authtoken';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -124,7 +129,7 @@ class Products with ChangeNotifier {
     final idx = _items.indexWhere((prod) => prod.id == id);
     if (idx >= 0) {
       final url =
-          'https://shop-app-5489d-default-rtdb.firebaseio.com/products/$id.json';
+          'https://shop-app-5489d-default-rtdb.firebaseio.com/products/$id.json?auth=$authtoken';
       await http.patch(Uri.parse(url),
           body: json.encode({
             'title': newProduct.title,
@@ -140,7 +145,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProd(String id) async {
     final url =
-        'https://shop-app-5489d-default-rtdb.firebaseio.com/products/$id.json';
+        'https://shop-app-5489d-default-rtdb.firebaseio.com/products/$id.json?auth=$authtoken';
     var existingProductIdx = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIdx];
     final response = await http.delete(Uri.parse(url));
