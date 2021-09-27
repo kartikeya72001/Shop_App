@@ -10,13 +10,14 @@ import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
 import 'package:shop_app/screens/user_products_screen.dart';
+import 'package:shop_app/widgets/splash_screen.dart';
 import './providers/products.dart';
 import './providers/orders.dart';
 
 void main() {
   runApp(MyApp());
 }
-//10.24
+//11.9
 
 class MyApp extends StatelessWidget {
   @override
@@ -29,14 +30,19 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<Auth, Products>(
           update: (ctx, auth, prevProducts) => Products(
             auth.token,
+            auth.userId,
             prevProducts == null ? [] : prevProducts.items,
           ),
         ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
-        ChangeNotifierProvider(
-          create: (ctx) => Orders(),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          update: (ctx, auth, prevOrder) => Orders(
+            auth.token,
+            auth.userId,
+            prevOrder == null ? [] : prevOrder,
+          ),
         ),
       ],
       // value: Products(),
@@ -48,7 +54,15 @@ class MyApp extends StatelessWidget {
             accentColor: Colors.amber,
             fontFamily: 'Lato',
           ),
-          home: auth.isAuth ? ProductOverviewScreen() : AuthScreen(),
+          home: auth.isAuth
+              ? ProductOverviewScreen()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (ctx, authRes) =>
+                      authRes.connectionState == ConnectionState.waiting
+                          ? SplashScreen()
+                          : AuthScreen(),
+                ),
           routes: {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),

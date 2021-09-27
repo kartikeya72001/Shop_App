@@ -43,8 +43,9 @@ class Products with ChangeNotifier {
   // var _showFavoritesOnly = false;
 
   final String authtoken;
+  final String userId;
 
-  Products(this.authtoken, this._items);
+  Products(this.authtoken, this.userId, this._items);
 
   List<Product> get Filteritems {
     return _items.where((element) => element.isFavourite).toList();
@@ -60,13 +61,19 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == productId);
   }
 
-  Future<void> fetchAndGetProducts() async {
+  Future<void> fetchAndGetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     final url =
-        'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json?auth=$authtoken';
+        'https://shop-app-5489d-default-rtdb.firebaseio.com/products.json?auth=$authtoken&$filterString';
     try {
       final resposne = await http.get(Uri.parse(url));
       final extractedData = json.decode(resposne.body) as Map<String, dynamic>;
       if (extractedData == null) return;
+      final urlFav =
+          'https://shop-app-5489d-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authtoken';
+      final favResp = await http.get(Uri.parse(urlFav));
+      final favData = json.decode(favResp.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((id, prod) {
         loadedProducts.add(Product(
@@ -75,7 +82,7 @@ class Products with ChangeNotifier {
           desc: prod['desc'],
           imgUrl: prod['imgUrl'],
           price: prod['price'],
-          isFavourite: prod['isFavourite'],
+          isFavourite: favData == null ? false : favData[id] ?? false,
         ));
       });
       // ignore: unnecessary_statements
@@ -107,7 +114,8 @@ class Products with ChangeNotifier {
           'desc': product.desc,
           'imgUrl': product.imgUrl,
           'price': product.price,
-          'isFavourite': product.isFavourite,
+          // 'isFavourite': product.isFavourite,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
